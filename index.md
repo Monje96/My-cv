@@ -1,7 +1,7 @@
 ---
 title: Alejandro Monje Santos
 subtitle: GIS Specialist | Remote sensing, Python & PostGIS 
-description: Jane Doe, Assistant Professor at Example University, builds open-source tools for data science and machine learning.
+description: Alejandro, GIS specialist.
 # thumbnail: images/profile-thumbnail.webp
 ---
 
