@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Generate cv.typ from the website's markdown files using the modern-cv Typst package.
 
-Reads structured data from pages/about.md, pages/research.md, pages/software.md,
-pages/teaching.md, pages/talks.md, pages/awards.md, and pages/services.md, then
+Reads structured data from pages/about.md and pages/skills.md, then
 generates a complete Typst CV file using the modern-cv package for styling.
 
 Usage: python generate_cv.py
@@ -273,22 +272,18 @@ def gen_preamble():
   font: {_typst_font_value(CV_FONT)},
   header-font: {_typst_font_value(CV_HEADER_FONT)},
   author: (
-    firstname: "Jane",
-    lastname: "Doe",
-    email: "jane.doe@example.com",
-    phone: "(+1) 234-567-8901",
-    homepage: "https://example.com",
-    github: "username",
-    address: "123 Science Building, Example University, Anytown, ST 12345",
+        firstname: "Alejandro",
+        lastname: "Monje Santos",
+        email: "alejandromonjesantos@gmail.com",
+        phone: "(+34) 689 264 708",
+        homepage: "https://monje96.github.io/My-cv/",
+        github: "Monje96",
+        address: "Madrid, Spain",
     positions: (
-      "Assistant Professor",
-      "Data Scientist",
+            "GIS Specialist",
     ),
     custom: (
-      (text: "username", icon: "twitter", link: "https://twitter.com/username"),
-      (text: "Jane Doe", icon: "linkedin", link: "https://www.linkedin.com/in/username"),
-      (text: "Jane Doe", icon: "google-scholar", link: "https://scholar.google.com"),
-      (text: "0000-0000-0000-0000", icon: "orcid", link: "https://orcid.org/0000-0000-0000-0000"),
+            (text: "Alejandro Monje", icon: "linkedin", link: "https://www.linkedin.com/in/alejandro-monje-santos/"),
     ),
   ),
   profile-picture: none,
@@ -304,7 +299,34 @@ def gen_preamble():
 #set heading(bookmarked: true)
 
 // Set PDF document title
-#set document(title: "Jane Doe - CV")"""
+#set document(title: "Alejandro Monje Santos - CV")"""
+
+
+def gen_profExperience(about):
+    """Generate Professional Experience section from about.md."""
+    section = extract_section(about, "## Professional Experience")
+    rows = parse_table(section)
+    if not rows:
+        return ""
+    lines = ["= Professional Experience\n"]
+    for row in rows:
+        year = strip_markdown(row.get("Year (Start - End)", ""))
+        company = strip_markdown(row.get("Company", ""))
+        location = escape_typst(row.get("Location", ""))
+        job_title = strip_markdown(row.get("Job title", ""))
+        job_description = strip_markdown(row.get("Job description", ""))
+        lines.append(
+            f"#resume-entry(\n"
+            f"  title: [\n"
+            f"    {job_title}, "
+            f"#text(size: 0.9em, weight: \"regular\")[{company}], "
+            f"#text(size: 0.9em, weight: \"regular\")[#emph[{location}]] \\\n"
+            f"    #text(weight: \"regular\", size: 0.9em)[{job_description}]\n"
+            f"  ],\n"
+            f"  date: [#text(size: 1.1em)[{year}]],\n"
+            f")"
+        )
+    return "\n\n".join(lines)
 
 
 def gen_education(about):
@@ -317,16 +339,31 @@ def gen_education(about):
     for row in rows:
         year = strip_markdown(row.get("Year", ""))
         degree = escape_typst(row.get("Degree", ""))
-        institution = escape_typst(row.get("Institution", ""))
-        dissertation = escape_typst(row.get("Dissertation/Thesis", ""))
+        institution = strip_markdown(row.get("Institution", ""))
         lines.append(
             f"#resume-entry(\n"
-            f"  title: [{degree}],\n"
-            f"  location: [{institution}],\n"
-            f"  date: [{year}],\n"
-            f"  description: [{dissertation}],\n"
+            f"  title: [\n"
+            f"    {degree} \\\n"
+            f"    #text(weight: \"regular\", size: 0.9em)[{institution}]\n"
+            f"  ],\n"
+            f"  date: [#text(size: 1.1em)[{year}]],\n"
             f")"
         )
+    return "\n\n".join(lines)
+
+
+def gen_skills(skills_text):
+    """Generate Personal skills section from skills.md."""
+    rows = parse_table(skills_text)
+    if not rows:
+        return ""
+    lines = ["= Personal skills\n"]
+    items = []
+    for row in rows:
+        competence = strip_markdown(row.get("Competence", ""))
+        skill = escape_typst(row.get("Skill", ""))
+        items.append(f"  - {competence}: {skill}")
+    lines.append("#resume-item[\n" + "\n".join(items) + "\n]")
     return "\n\n".join(lines)
 
 
@@ -656,31 +693,13 @@ def main():
     pages = base / "pages"
 
     about = read_file(pages, "about.md")
-    research = read_file(pages, "research.md")
-    software = read_file(pages, "software.md")
-    teaching = read_file(pages, "teaching.md")
-    talks = read_file(pages, "talks.md")
-    awards = read_file(pages, "awards.md")
-    services = read_file(pages, "services.md")
+    skills = read_file(pages, "skills.md")
 
     sections = [
         gen_preamble(),
+        gen_profExperience(about),
         gen_education(about),
-        gen_appointments(about),
-        gen_research_areas(research),
-        gen_patents(research),
-        gen_awards(awards),
-        gen_books(research),
-        gen_publications(research),
-        gen_grants(research),
-        gen_software(software),
-        gen_teaching(teaching),
-        gen_mentoring(teaching),
-        gen_workshops(talks),
-        gen_invited_talks(talks),
-        gen_conf_proceedings(talks),
-        gen_conf_presentations(talks),
-        gen_services(services),
+        gen_skills(skills),
     ]
 
     output = "\n\n".join(s for s in sections if s)
