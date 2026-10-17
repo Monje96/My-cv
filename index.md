@@ -11,7 +11,7 @@ description: Jane Doe, Assistant Professor at Example University, builds open-so
 :columns: 12 12 4 4
 
 ```{image} logo.png
-:alt: Jane Doe
+:alt: Alejandro Monje Santos
 :width: 95%
 ```
 
@@ -20,15 +20,11 @@ description: Jane Doe, Assistant Professor at Example University, builds open-so
 :::{grid-item}
 :columns: 12 12 8 8
 
-**Software Engineer** | **Data Scientist**
+**GIS Specialist** | **Remote sensing**
 
-[Department of Computer Science](https://example.com/cs), Example University
+[alejandromonjesantos@gmail.com](alejandromonjesantos@gmail.com) |
 
-[123 Science Building](https://maps.google.com), Anytown, ST 12345
-
-[jane.doe@example.com](mailto:jane.doe@example.com) | [example.com](https://example.com)
-
-**Research Interests:** Data Science, Machine Learning, Open-Source Software Development, Cloud Computing
+**Interests:** GIS, Remote sensing, Python, R, GeoAI
 
 [CV (PDF)](cv.pdf) |
 [LinkedIn](www.linkedin.com/in/alejandro-monje-santos) |
