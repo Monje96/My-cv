@@ -61,8 +61,13 @@ jobs:
       - name: Generate CV Typst source
         run: python generate_cv.py
 
-      - name: Compile CV PDF
-        run: typst compile cv.typ cv.pdf --font-path ./fonts --ignore-system-fonts
+      - name: Generate Spanish CV Typst source
+        run: python generate_cv.py --language es
+
+      - name: Compile CV PDFs
+        run: |
+          typst compile cv.typ cv.pdf --font-path ./fonts --ignore-system-fonts
+          typst compile cv-es.typ cv-es.pdf --font-path ./fonts --ignore-system-fonts
 
       - name: Build HTML Assets
         # Remove BASE_URL if using a custom domain (CNAME)
@@ -87,6 +92,7 @@ jobs:
         run: |
           cp CNAME ./_build/html/ 2>/dev/null || true
           cp cv.pdf ./_build/html/cv.pdf
+          cp cv-es.pdf ./_build/html/cv-es.pdf
           # Rewrite hashed CV URL to stable /cv.pdf path
           find ./_build/html -name "*.html" -exec sed -i 's|/build/cv-[a-f0-9]\{20,\}\.pdf|/cv.pdf|g' {} \;
 
