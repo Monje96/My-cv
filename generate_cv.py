@@ -8,6 +8,7 @@ Usage: python generate_cv.py
 Output: cv.typ (compile with: typst compile cv.typ cv.pdf --font-path ./fonts)
 """
 
+import argparse
 import re
 from pathlib import Path
 
@@ -27,6 +28,49 @@ from pathlib import Path
 # `#set text(...)` in the preamble will not change it).
 CV_FONT = ("Source Sans Pro",)
 CV_HEADER_FONT = "Source Sans Pro"
+
+CV_TRANSLATIONS = {
+    "en": {
+        "typst_language": "en",
+        "address": "Madrid, Spain",
+        "position": "GIS Specialist",
+        "document_title": "Alejandro Monje Santos - CV",
+        "experience_heading": "Professional Experience",
+        "experience_year": "Year (Start - End)",
+        "job_title": "Job title",
+        "job_description": "Job description",
+        "company": "Company",
+        "location": "Location",
+        "education_heading": "Education",
+        "education_year": "Year",
+        "degree": "Degree",
+        "institution": "Institution",
+        "skills_heading": "Personal skills",
+        "competence": "Competence",
+        "skill": "Skill",
+        "output": "cv.typ",
+    },
+    "es": {
+        "typst_language": "es",
+        "address": "Madrid, España",
+        "position": "Especialista SIG",
+        "document_title": "Alejandro Monje Santos - CV (Español)",
+        "experience_heading": "Experiencia profesional",
+        "experience_year": "Año (Inicio - Fin)",
+        "job_title": "Puesto",
+        "job_description": "Descripción del puesto",
+        "company": "Empresa",
+        "location": "Ubicación",
+        "education_heading": "Formación académica",
+        "education_year": "Año",
+        "degree": "Titulación",
+        "institution": "Centro",
+        "skills_heading": "Competencias personales",
+        "competence": "Competencia",
+        "skill": "Habilidad",
+        "output": "cv-es.typ",
+    },
+}
 
 
 def _typst_font_value(font):
@@ -256,7 +300,7 @@ def content_with_table(text):
 # ============================================================================
 
 
-def gen_preamble():
+def gen_preamble(language):
     """Generate Typst preamble with modern-cv import and author config.
 
     TODO: Update author information below with your own details.
@@ -278,9 +322,9 @@ def gen_preamble():
         phone: "(+34) 689 264 708",
         homepage: "https://monje96.github.io/My-cv/",
         github: "Monje96",
-        address: "Madrid, Spain",
+        address: "{language['address']}",
     positions: (
-            "GIS Specialist",
+            "{language['position']}",
     ),
     custom: (
             (text: "Alejandro Monje", icon: "linkedin", link: "https://www.linkedin.com/in/alejandro-monje-santos/"),
@@ -288,7 +332,7 @@ def gen_preamble():
   ),
   profile-picture: none,
   date: datetime.today().display(),
-  language: "en",
+  language: "{language['typst_language']}",
   paper-size: "us-letter",
   accent-color: default-accent-color,
   colored-headers: true,
@@ -299,22 +343,22 @@ def gen_preamble():
 #set heading(bookmarked: true)
 
 // Set PDF document title
-#set document(title: "Alejandro Monje Santos - CV")"""
+#set document(title: "{language['document_title']}")"""
 
 
-def gen_profExperience(about):
-    """Generate Professional Experience section from about.md."""
-    section = extract_section(about, "## Professional Experience")
+def gen_profExperience(about, language):
+    """Generate the professional experience section from about.md."""
+    section = extract_section(about, f"## {language['experience_heading']}")
     rows = parse_table(section)
     if not rows:
         return ""
-    lines = ["= Professional Experience\n"]
+    lines = [f"= {language['experience_heading']}\n"]
     for row in rows:
-        year = strip_markdown(row.get("Year (Start - End)", ""))
-        company = strip_markdown(row.get("Company", ""))
-        location = escape_typst(row.get("Location", ""))
-        job_title = strip_markdown(row.get("Job title", ""))
-        job_description = strip_markdown(row.get("Job description", ""))
+        year = strip_markdown(row.get(language["experience_year"], ""))
+        company = strip_markdown(row.get(language["company"], ""))
+        location = escape_typst(row.get(language["location"], ""))
+        job_title = strip_markdown(row.get(language["job_title"], ""))
+        job_description = strip_markdown(row.get(language["job_description"], ""))
         lines.append(
             f"#resume-entry(\n"
             f"  title: [\n"
@@ -329,17 +373,17 @@ def gen_profExperience(about):
     return "\n\n".join(lines)
 
 
-def gen_education(about):
-    """Generate Education section from about.md."""
-    section = extract_section(about, "## Education")
+def gen_education(about, language):
+    """Generate the education section from about.md."""
+    section = extract_section(about, f"## {language['education_heading']}")
     rows = parse_table(section)
     if not rows:
         return ""
-    lines = ["= Education\n"]
+    lines = [f"= {language['education_heading']}\n"]
     for row in rows:
-        year = strip_markdown(row.get("Year", ""))
-        degree = escape_typst(row.get("Degree", ""))
-        institution = strip_markdown(row.get("Institution", ""))
+        year = strip_markdown(row.get(language["education_year"], ""))
+        degree = escape_typst(row.get(language["degree"], ""))
+        institution = strip_markdown(row.get(language["institution"], ""))
         lines.append(
             f"#resume-entry(\n"
             f"  title: [\n"
@@ -352,16 +396,16 @@ def gen_education(about):
     return "\n\n".join(lines)
 
 
-def gen_skills(skills_text):
-    """Generate Personal skills section from skills.md."""
+def gen_skills(skills_text, language):
+    """Generate the skills section from skills.md."""
     rows = parse_table(skills_text)
     if not rows:
         return ""
-    lines = ["= Personal skills\n"]
+    lines = [f"= {language['skills_heading']}\n"]
     items = []
     for row in rows:
-        competence = strip_markdown(row.get("Competence", ""))
-        skill = escape_typst(row.get("Skill", ""))
+        competence = strip_markdown(row.get(language["competence"], ""))
+        skill = escape_typst(row.get(language["skill"], ""))
         items.append(f"  - {competence}: {skill}")
     lines.append("#resume-item[\n" + "\n".join(items) + "\n]")
     return "\n\n".join(lines)
@@ -688,22 +732,32 @@ def gen_services(services):
 
 
 def main():
-    """Read website markdown files and generate cv.typ."""
+    """Read localized website markdown files and generate a Typst CV."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--language",
+        choices=CV_TRANSLATIONS,
+        default="en",
+        help="Language of the CV (default: en)",
+    )
+    args = parser.parse_args()
+
+    language = CV_TRANSLATIONS[args.language]
     base = Path(__file__).parent
-    pages = base / "pages"
+    pages = base / "pages" if args.language == "en" else base / "es" / "pages"
 
     about = read_file(pages, "about.md")
     skills = read_file(pages, "skills.md")
 
     sections = [
-        gen_preamble(),
-        gen_profExperience(about),
-        gen_education(about),
-        gen_skills(skills),
+        gen_preamble(language),
+        gen_profExperience(about, language),
+        gen_education(about, language),
+        gen_skills(skills, language),
     ]
 
     output = "\n\n".join(s for s in sections if s)
-    out_path = base / "cv.typ"
+    out_path = base / language["output"]
     out_path.write_text(output, encoding="utf-8")
     print(f"Generated {out_path} ({len(output):,} bytes)")
 
