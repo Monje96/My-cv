@@ -27,9 +27,9 @@ project:
     - CONTRIBUTING.md
     - README.md
   toc:
+    - file: index.md
     - title: English
       children:
-        - file: index.md
         - file: pages/about.md
         - file: pages/skills.md
     - title: Español
