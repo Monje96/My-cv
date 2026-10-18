@@ -1,7 +1,7 @@
 ---
 title: Alejandro Monje Santos
-subtitle: GIS Specialist | Remote sensing, Python & PostGIS 
-description: Alejandro, GIS specialist.
+subtitle: GIS Specialist | Remote sensing, Python & PostGIS
+description: GIS specialist focused on remote sensing, Python and spatial data.
 # thumbnail: images/profile-thumbnail.webp
 ---
 
@@ -26,7 +26,9 @@ description: Alejandro, GIS specialist.
 
 **Interests:** GIS, Remote sensing, Python, R, GeoAI
 
-[CV (PDF)](cv.pdf) |
+[English](index.md) | [Español](es/index.md)
+
+[CV (PDF, English)](cv.pdf) | [CV (PDF, Español)](cv-es.pdf) |
 [LinkedIn](www.linkedin.com/in/alejandro-monje-santos) |
 [GitHub](https://github.com/Monje96)
 
