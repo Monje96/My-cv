@@ -15,6 +15,8 @@ project:
     - '**.ipynb_checkpoints'
     - cv.typ
     - cv.pdf
+    - cv-es.typ
+    - cv-es.pdf
     - generate_cv.py
     - generate_rss.py
     - inject_comments.py
@@ -25,9 +27,16 @@ project:
     - CONTRIBUTING.md
     - README.md
   toc:
-    - file: index.md
-    - file: pages/about.md
-    - file: pages/skills.md
+    - title: English
+      children:
+        - file: index.md
+        - file: pages/about.md
+        - file: pages/skills.md
+    - title: Español
+      children:
+        - file: es/index.md
+        - file: es/pages/about.md
+        - file: es/pages/skills.md
     - pattern: blog/*.md
       hidden: true
 site:
@@ -45,6 +54,7 @@ site:
   parts:
     primary_sidebar_footer: ''
     footer: |
-      [CV (PDF)](cv.pdf) |
+      [English](index.md) | [Español](es/index.md) |
+      [CV (PDF, English)](cv.pdf) | [CV (PDF, Español)](cv-es.pdf) |
       [GitHub](https://github.com/username) |
       [LinkedIn](https://www.linkedin.com/in/username)
